@@ -1,135 +1,79 @@
-import { ApiKeyCheck } from "@/components/ApiKeyCheck";
-import Image from "next/image";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 
-const KeyFilesSection = () => (
-  <div className="bg-white px-8 py-4">
-    <h2 className="text-xl font-semibold mb-4">How it works:</h2>
-    <ul className="space-y-4 text-gray-600">
-      <li className="flex items-start gap-2">
-        <span>📄</span>
-        <span>
-          <code className="font-medium">src/app/layout.tsx</code> - Main layout
-          with TamboProvider
-        </span>
-      </li>
-      <li className="flex items-start gap-2">
-        <span>📄</span>
-        <span>
-          <code className="font-medium font-mono">src/app/chat/page.tsx</code> -
-          Chat page with TamboProvider and MCP integration
-        </span>
-      </li>
-      <li className="flex items-start gap-2">
-        <span>📄</span>
-        <span>
-          <code className="font-medium font-mono">
-            src/app/interactables/page.tsx
-          </code>{" "}
-          - Interactive demo page with tools and components
-        </span>
-      </li>
-      <li className="flex items-start gap-2">
-        <span>📄</span>
-        <span>
-          <code className="font-medium font-mono">
-            src/components/tambo/message-thread-full.tsx
-          </code>{" "}
-          - Chat UI
-        </span>
-      </li>
-      <li className="flex items-start gap-2">
-        <span>📄</span>
-        <span>
-          <code className="font-medium font-mono">
-            src/components/tambo/graph.tsx
-          </code>{" "}
-          - A generative graph component
-        </span>
-      </li>
-      <li className="flex items-start gap-2">
-        <span>📄</span>
-        <span>
-          <code className="font-medium font-mono">
-            src/services/population-stats.ts
-          </code>{" "}
-          - Example tool implementation with mock population data
-        </span>
-      </li>
-      <li className="flex items-start gap-2">
-        <span className="text-blue-500">📄</span>
-        <span>
-          <code className="font-medium font-mono">src/lib/tambo.ts</code> -
-          Component and tool registration
-        </span>
-      </li>
-      <li className="flex items-start gap-2">
-        <span className="text-blue-500">📄</span>
-        <span>
-          <code className="font-medium font-mono">README.md</code> - For more
-          details check out the README
-        </span>
-      </li>
-    </ul>
-    <div className="flex gap-4 flex-wrap mt-4">
-      <a
-        href="https://docs.tambo.co"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="px-6 py-3 rounded-md font-medium transition-colors text-lg mt-4 border border-gray-300 hover:bg-gray-50"
-      >
-        View Docs
-      </a>
-      <a
-        href="https://tambo.co/dashboard"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="px-6 py-3 rounded-md font-medium transition-colors text-lg mt-4 border border-gray-300 hover:bg-gray-50"
-      >
-        Dashboard
-      </a>
-    </div>
-  </div>
-);
+export const dynamic = "force-dynamic";
 
 export default function Home() {
   return (
-    <div className="min-h-screen p-8 flex flex-col items-center justify-center font-[family-name:var(--font-geist-sans)]">
-      <main className="max-w-2xl w-full space-y-8">
-        <div className="flex flex-col items-center">
-          <a href="https://tambo.co" target="_blank" rel="noopener noreferrer">
-            <Image
-              src="/Octo-Icon.svg"
-              alt="Tambo AI Logo"
-              width={80}
-              height={80}
-              className="mb-4"
-            />
-          </a>
-          <h1 className="text-4xl text-center">tambo-ai chat template</h1>
+    <div className="min-h-screen flex flex-col font-[family-name:var(--font-geist-sans)]">
+      <nav className="flex items-center justify-between px-8 py-4 border-b border-gray-200">
+        <span className="text-xl font-bold">Oakbook</span>
+        <div className="flex items-center gap-4">
+          <SignedOut>
+            <Link
+              href="/sign-in"
+              className="text-sm font-medium text-gray-600 hover:text-gray-900"
+            >
+              Sign in
+            </Link>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+        </div>
+      </nav>
+
+      <main className="flex-1 flex flex-col items-center justify-center px-8">
+        <div className="max-w-2xl text-center space-y-6">
+          <h1 className="text-5xl font-bold tracking-tight">
+            Your YouTube Learning Companion
+          </h1>
+          <p className="text-lg text-gray-600">
+            Chat with AI about any YouTube video. Get explanations, summaries,
+            and deeper understanding — powered by context-aware AI.
+          </p>
+
+          <div className="flex justify-center gap-4 pt-4">
+            <SignedOut>
+              <Link
+                href="/sign-up"
+                className="px-6 py-3 rounded-md font-medium bg-gray-900 text-white hover:bg-gray-800 transition-colors"
+              >
+                Get Started
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <Link
+                href="/dashboard"
+                className="px-6 py-3 rounded-md font-medium bg-gray-900 text-white hover:bg-gray-800 transition-colors"
+              >
+                Go to Dashboard
+              </Link>
+            </SignedIn>
+          </div>
         </div>
 
-        <div className="w-full space-y-8">
-          <div className="bg-white px-8 py-4">
-            <h2 className="text-xl font-semibold mb-4">Setup Checklist</h2>
-            <ApiKeyCheck>
-              <div className="flex gap-4 flex-wrap">
-                <a
-                  href="/chat"
-                  className="px-6 py-3 rounded-md font-medium shadow-sm transition-colors text-lg mt-4 bg-[#7FFFC3] hover:bg-[#72e6b0] text-gray-800"
-                >
-                  Go to Chat →
-                </a>
-                <a
-                  href="/interactables"
-                  className="px-6 py-3 rounded-md font-medium shadow-sm transition-colors text-lg mt-4 bg-[#FFE17F] hover:bg-[#f5d570] text-gray-800"
-                >
-                  Interactables Demo →
-                </a>
-              </div>
-            </ApiKeyCheck>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mt-20">
+          <div className="text-center space-y-2">
+            <h3 className="font-semibold text-lg">Video-Aware Chat</h3>
+            <p className="text-sm text-gray-600">
+              AI understands the video you&apos;re watching and answers questions
+              in context.
+            </p>
           </div>
-
-          <KeyFilesSection />
+          <div className="text-center space-y-2">
+            <h3 className="font-semibold text-lg">Chrome Extension</h3>
+            <p className="text-sm text-gray-600">
+              One click from any YouTube video to start a learning conversation.
+            </p>
+          </div>
+          <div className="text-center space-y-2">
+            <h3 className="font-semibold text-lg">AI-Powered Insights</h3>
+            <p className="text-sm text-gray-600">
+              Get summaries, explanations, and follow-up questions generated by
+              AI.
+            </p>
+          </div>
         </div>
       </main>
     </div>

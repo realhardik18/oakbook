@@ -1,23 +1,43 @@
 "use client";
 
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 import { MessageThreadFull } from "@/components/tambo/message-thread-full";
 import { useMcpServers } from "@/components/tambo/mcp-config-modal";
 import { components, tools } from "@/lib/tambo";
 import { TamboProvider } from "@tambo-ai/react";
 
-/**
- * Home page component that renders the Tambo chat interface.
- *
- * @remarks
- * The `NEXT_PUBLIC_TAMBO_URL` environment variable specifies the URL of the Tambo server.
- * You do not need to set it if you are using the default Tambo server.
- * It is only required if you are running the API server locally.
- *
- * @see {@link https://github.com/tambo-ai/tambo/blob/main/CONTRIBUTING.md} for instructions on running the API server locally.
- */
-export default function Home() {
-  // Load MCP server configurations
+function ChatContent() {
+  const searchParams = useSearchParams();
+  const videoTitle = searchParams.get("videoTitle");
+  const videoUrl = searchParams.get("videoUrl");
+
   const mcpServers = useMcpServers();
+
+  const contextHelpers = {
+    youtubeVideo: () => {
+      if (!videoTitle && !videoUrl) return null;
+      return {
+        videoTitle: videoTitle || "Unknown",
+        videoUrl: videoUrl || "",
+        instruction:
+          "The user is watching this YouTube video. Use this context to answer their questions about the video content.",
+      };
+    },
+  };
+
+  const welcomeText = videoTitle
+    ? `I see you're watching **${videoTitle}**. Feel free to ask me anything about this video — I can help with summaries, explanations, or any questions you have!`
+    : "Welcome to Oakbook! Ask me anything, or use the Chrome extension to open a YouTube video for context-aware learning.";
+
+  const initialMessages = [
+    {
+      role: "assistant" as const,
+      content: [{ type: "text" as const, text: welcomeText }],
+    },
+  ];
 
   return (
     <TamboProvider
@@ -26,10 +46,41 @@ export default function Home() {
       tools={tools}
       tamboUrl={process.env.NEXT_PUBLIC_TAMBO_URL}
       mcpServers={mcpServers}
+      contextHelpers={contextHelpers}
+      initialMessages={initialMessages}
     >
-      <div className="h-screen">
-        <MessageThreadFull className="max-w-4xl mx-auto"/>
+      <div className="h-screen flex flex-col">
+        <nav className="flex items-center justify-between px-8 py-3 border-b border-gray-200 shrink-0">
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard" className="text-xl font-bold">
+              Oakbook
+            </Link>
+            {videoTitle && (
+              <span className="text-sm text-gray-500 truncate max-w-md">
+                Watching: {videoTitle}
+              </span>
+            )}
+          </div>
+          <UserButton />
+        </nav>
+        <div className="flex-1 min-h-0">
+          <MessageThreadFull className="max-w-4xl mx-auto h-full" />
+        </div>
       </div>
     </TamboProvider>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-screen flex items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
+      <ChatContent />
+    </Suspense>
   );
 }
