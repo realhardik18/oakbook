@@ -8,6 +8,7 @@ import { MessageThreadFull } from "@/components/tambo/message-thread-full";
 import { useMcpServers } from "@/components/tambo/mcp-config-modal";
 import { components, tools } from "@/lib/tambo";
 import { TamboProvider } from "@tambo-ai/react";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { ActiveVideo } from "@/lib/supabase";
 
 function ChatContent() {
@@ -83,18 +84,21 @@ function ChatContent() {
       initialMessages={initialMessages}
     >
       <div className="h-screen flex flex-col">
-        <nav className="flex items-center justify-between px-8 py-3 border-b border-gray-200 shrink-0">
+        <nav className="flex items-center justify-between px-8 py-3 border-b border-border shrink-0">
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="text-xl font-bold">
               Oakbook
             </Link>
             {videoTitle && (
-              <span className="text-sm text-gray-500 truncate max-w-md">
+              <span className="text-sm text-muted-foreground truncate max-w-md">
                 Watching: {videoTitle}
               </span>
             )}
           </div>
-          <UserButton />
+          <div className="flex items-center gap-4">
+            <ThemeToggle />
+            <UserButton />
+          </div>
         </nav>
         <div className="flex-1 min-h-0">
           <MessageThreadFull className="max-w-4xl mx-auto h-full" />

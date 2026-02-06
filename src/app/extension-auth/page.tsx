@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function ExtensionAuthPage() {
   const [status, setStatus] = useState<"loading" | "success" | "error">(
@@ -27,22 +28,25 @@ export default function ExtensionAuthPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <nav className="flex items-center justify-between px-8 py-3 border-b border-gray-200">
+      <nav className="flex items-center justify-between px-8 py-3 border-b border-border">
         <Link href="/dashboard" className="text-xl font-bold">
           Oakbook
         </Link>
-        <UserButton />
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <UserButton />
+        </div>
       </nav>
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center max-w-md">
           {status === "loading" && (
-            <p className="text-gray-500">Connecting extension...</p>
+            <p className="text-muted-foreground">Connecting extension...</p>
           )}
           {status === "success" && (
             <>
-              <div className="text-4xl mb-4">&#10003;</div>
+              <div className="text-4xl mb-4 text-green-500">&#10003;</div>
               <h1 className="text-2xl font-bold mb-2">Connected!</h1>
-              <p className="text-gray-500">
+              <p className="text-muted-foreground">
                 Your Oakbook extension is now connected. You can close this tab
                 and start watching YouTube videos — they&apos;ll automatically
                 appear in your chat.
@@ -51,10 +55,10 @@ export default function ExtensionAuthPage() {
           )}
           {status === "error" && (
             <>
-              <h1 className="text-2xl font-bold mb-2 text-red-600">
+              <h1 className="text-2xl font-bold mb-2 text-destructive">
                 Connection Failed
               </h1>
-              <p className="text-gray-500">
+              <p className="text-muted-foreground">
                 Could not connect the extension. Please try again.
               </p>
             </>
