@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
@@ -8,13 +8,45 @@ import { MessageThreadFull } from "@/components/tambo/message-thread-full";
 import { useMcpServers } from "@/components/tambo/mcp-config-modal";
 import { components, tools } from "@/lib/tambo";
 import { TamboProvider } from "@tambo-ai/react";
+import type { ActiveVideo } from "@/lib/supabase";
 
 function ChatContent() {
   const searchParams = useSearchParams();
-  const videoTitle = searchParams.get("videoTitle");
-  const videoUrl = searchParams.get("videoUrl");
+  const paramTitle = searchParams.get("videoTitle");
+  const paramUrl = searchParams.get("videoUrl");
 
   const mcpServers = useMcpServers();
+
+  const [activeVideo, setActiveVideo] = useState<ActiveVideo | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const fetchActiveVideo = useCallback(async () => {
+    try {
+      const res = await fetch("/api/videos/active");
+      if (!res.ok) return;
+      const { video } = await res.json();
+      setActiveVideo(video || null);
+    } catch {
+      // Network error — skip this poll cycle
+    }
+  }, []);
+
+  useEffect(() => {
+    // Initial fetch
+    fetchActiveVideo();
+
+    // Poll every 5s for changes
+    pollRef.current = setInterval(fetchActiveVideo, 5000);
+
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, [fetchActiveVideo]);
+
+  // Resolve video: Supabase active video takes priority, fallback to URL params
+  const videoTitle = activeVideo?.video_title || paramTitle;
+  const videoUrl = activeVideo?.video_url || paramUrl;
+  const channelName = activeVideo?.channel_name;
 
   const contextHelpers = {
     youtubeVideo: () => {
@@ -22,6 +54,7 @@ function ChatContent() {
       return {
         videoTitle: videoTitle || "Unknown",
         videoUrl: videoUrl || "",
+        ...(channelName ? { channelName } : {}),
         instruction:
           "The user is watching this YouTube video. Use this context to answer their questions about the video content.",
       };

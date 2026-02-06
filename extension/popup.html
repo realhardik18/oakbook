@@ -19,7 +19,21 @@
         color: #666;
         margin-bottom: 12px;
       }
-      button {
+      #auth-status {
+        font-size: 12px;
+        margin-bottom: 12px;
+        padding: 6px 10px;
+        border-radius: 4px;
+      }
+      #auth-status.connected {
+        background: #e6f9e6;
+        color: #1a7a1a;
+      }
+      #auth-status.disconnected {
+        background: #fef2e6;
+        color: #a05a00;
+      }
+      .btn {
         width: 100%;
         padding: 10px;
         font-size: 14px;
@@ -29,20 +43,46 @@
         cursor: pointer;
         background: #111;
         color: #fff;
+        margin-bottom: 8px;
       }
-      button:hover {
+      .btn:hover {
         background: #333;
       }
-      button:disabled {
+      .btn:disabled {
         background: #ccc;
         cursor: not-allowed;
+      }
+      .btn-secondary {
+        background: #fff;
+        color: #111;
+        border: 1px solid #ddd;
+      }
+      .btn-secondary:hover {
+        background: #f5f5f5;
+      }
+      .btn-danger {
+        background: #fff;
+        color: #dc2626;
+        border: 1px solid #fca5a5;
+        font-size: 12px;
+        padding: 6px;
+      }
+      .btn-danger:hover {
+        background: #fef2f2;
       }
     </style>
   </head>
   <body>
     <h1>Oakbook</h1>
+    <div id="auth-status" class="disconnected">Not connected</div>
     <div id="status">Detecting video...</div>
-    <button id="open" disabled>Open in Oakbook</button>
+    <button id="signin" class="btn" style="display: none">
+      Sign in to Oakbook
+    </button>
+    <button id="open" class="btn" disabled>Open Chat</button>
+    <button id="signout" class="btn-danger" style="display: none">
+      Sign out
+    </button>
     <script src="popup.js"></script>
   </body>
 </html>
